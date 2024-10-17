@@ -1,0 +1,21 @@
+{
+    "name": "wolfcode/authenticator",
+    "description": "authenticator",
+    "type": "library",
+    "require": {
+        "php": ">=8.0",
+        "endroid/qr-code": "4.8.2"
+    },
+    "license": "BSD-2-Clause",
+    "autoload": {
+        "psr-4": {
+            "Wolfcode\\Authenticator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "wolfcode"
+        }
+    ],
+    "minimum-stability": "dev"
+}
