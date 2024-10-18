@@ -1,5 +1,9 @@
 # PHP 常用身份验证器
 
+```shell
+composer require wolfcode/authenticator
+```
+
 ## Google Authenticator
 
 ```php
