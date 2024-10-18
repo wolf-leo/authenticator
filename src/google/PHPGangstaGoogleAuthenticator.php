@@ -85,9 +85,8 @@ class PHPGangstaGoogleAuthenticator
         return str_pad($value % $modulo, $this->_codeLength, '0', STR_PAD_LEFT);
     }
 
-    public function getQRCode($name): ResultInterface
+    public function getQRCode($name, $secret): ResultInterface
     {
-        $secret     = $this->createSecret();
         $urlencoded = ('otpauth://totp/' . $name . '?secret=' . $secret);
         $qrCode     = QrCode::create($urlencoded)
             ->setEncoding(new Encoding('UTF-8'))
