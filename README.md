@@ -4,6 +4,10 @@
 composer require wolfcode/authenticator
 ```
 
+> To enable two-factor authentication, you'll need an app that supports TOTP such as
+>
+> [2FAS](https://2fas.com/), [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2), or [KeePassXC](https://keepassxc.org/).
+
 ## Google Authenticator
 
 ```php
