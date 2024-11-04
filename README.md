@@ -19,7 +19,7 @@ composer require wolfcode/authenticator
         $secret = $ga->createSecret(32);
         // xxx You can customize the name displayed in the APP 
         // xxx 可以自定义在APP中显示的名称
-        $dataUri = $ga->getQRCode('xxx')->getDataUri();
+        $dataUri = $ga->getQRCode('xxx',$secret)->getDataUri();
         return $dataUri;
         // "<img src='{$dataUri}' alt=''>";
     }
