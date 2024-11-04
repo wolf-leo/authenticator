@@ -30,12 +30,12 @@ class PHPGangsta_GoogleAuthenticator
             throw new Exception('Bad secret length');
         }
         $secret = '';
-        $rnd = false;
+        $rnd    = false;
         if (function_exists('random_bytes')) {
             $rnd = random_bytes($secretLength);
-        } elseif (function_exists('mcrypt_create_iv')) {
+        }elseif (function_exists('mcrypt_create_iv')) {
             $rnd = mcrypt_create_iv($secretLength, MCRYPT_DEV_URANDOM);
-        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+        }elseif (function_exists('openssl_random_pseudo_bytes')) {
             $rnd = openssl_random_pseudo_bytes($secretLength, $cryptoStrong);
             if (!$cryptoStrong) {
                 $rnd = false;
@@ -45,7 +45,7 @@ class PHPGangsta_GoogleAuthenticator
             for ($i = 0; $i < $secretLength; ++$i) {
                 $secret .= $validChars[ord($rnd[$i]) & 31];
             }
-        } else {
+        }else {
             throw new Exception('No source of secure random');
         }
 
@@ -55,7 +55,7 @@ class PHPGangsta_GoogleAuthenticator
     /**
      * Calculate the code, with given secret and point in time.
      *
-     * @param string   $secret
+     * @param string $secret
      * @param int|null $timeSlice
      *
      * @return string
@@ -69,7 +69,7 @@ class PHPGangsta_GoogleAuthenticator
         $secretkey = $this->_base32Decode($secret);
 
         // Pack time into binary string
-        $time = chr(0).chr(0).chr(0).chr(0).pack('N*', $timeSlice);
+        $time = chr(0) . chr(0) . chr(0) . chr(0) . pack('N*', $timeSlice);
         // Hash it with users secret key
         $hm = hash_hmac('SHA1', $time, $secretkey, true);
         // Use last nipple of result as index/offset
@@ -94,30 +94,30 @@ class PHPGangsta_GoogleAuthenticator
      * @param string $name
      * @param string $secret
      * @param string $title
-     * @param array  $params
+     * @param array $params
      *
      * @return string
      */
     public function getQRCodeGoogleUrl($name, $secret, $title = null, $params = array())
     {
-        $width = !empty($params['width']) && (int) $params['width'] > 0 ? (int) $params['width'] : 200;
-        $height = !empty($params['height']) && (int) $params['height'] > 0 ? (int) $params['height'] : 200;
-        $level = !empty($params['level']) && array_search($params['level'], array('L', 'M', 'Q', 'H')) !== false ? $params['level'] : 'M';
+        $width  = !empty($params['width']) && (int)$params['width'] > 0 ? (int)$params['width'] : 200;
+        $height = !empty($params['height']) && (int)$params['height'] > 0 ? (int)$params['height'] : 200;
+        $level  = !empty($params['level']) && array_search($params['level'], array('L', 'M', 'Q', 'H')) !== false ? $params['level'] : 'M';
 
-        $urlencoded = urlencode('otpauth://totp/'.$name.'?secret='.$secret.'');
+        $urlencoded = urlencode('otpauth://totp/' . $name . '?secret=' . $secret . '');
         if (isset($title)) {
-            $urlencoded .= urlencode('&issuer='.urlencode($title));
+            $urlencoded .= urlencode('&issuer=' . urlencode($title));
         }
 
-        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size=${width}x${height}&ecc=$level";
+        return "https://api.qrserver.com/v1/create-qr-code/?data=$urlencoded&size={$width}x{$height}&ecc=$level";
     }
 
     /**
      * Check if the code is correct. This will accept codes starting from $discrepancy*30sec ago to $discrepancy*30sec from now.
      *
-     * @param string   $secret
-     * @param string   $code
-     * @param int      $discrepancy      This is the allowed time drift in 30 second units (8 means 4 minutes before or after)
+     * @param string $secret
+     * @param string $code
+     * @param int $discrepancy This is the allowed time drift in 30 second units (8 means 4 minutes before or after)
      * @param int|null $currentTimeSlice time slice if we want use other that time()
      *
      * @return bool
@@ -169,11 +169,11 @@ class PHPGangsta_GoogleAuthenticator
             return '';
         }
 
-        $base32chars = $this->_getBase32LookupTable();
+        $base32chars        = $this->_getBase32LookupTable();
         $base32charsFlipped = array_flip($base32chars);
 
         $paddingCharCount = substr_count($secret, $base32chars[32]);
-        $allowedValues = array(6, 4, 3, 1, 0);
+        $allowedValues    = array(6, 4, 3, 1, 0);
         if (!in_array($paddingCharCount, $allowedValues)) {
             return false;
         }
@@ -183,8 +183,8 @@ class PHPGangsta_GoogleAuthenticator
                 return false;
             }
         }
-        $secret = str_replace('=', '', $secret);
-        $secret = str_split($secret);
+        $secret       = str_replace('=', '', $secret);
+        $secret       = str_split($secret);
         $binaryString = '';
         for ($i = 0; $i < count($secret); $i = $i + 8) {
             $x = '';
@@ -215,7 +215,7 @@ class PHPGangsta_GoogleAuthenticator
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', // 15
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', // 23
             'Y', 'Z', '2', '3', '4', '5', '6', '7', // 31
-            '=',  // padding char
+            '=',                                    // padding char
         );
     }
 
