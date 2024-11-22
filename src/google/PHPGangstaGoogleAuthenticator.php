@@ -4,12 +4,11 @@ namespace Wolfcode\Authenticator\google;
 
 use Endroid\QrCode\Writer\Result\ResultInterface;
 use \Exception;
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\Writer\PngWriter;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 
 class PHPGangstaGoogleAuthenticator
 {
@@ -85,19 +84,17 @@ class PHPGangstaGoogleAuthenticator
         return str_pad($value % $modulo, $this->_codeLength, '0', STR_PAD_LEFT);
     }
 
-    public function getQRCode($name, $secret): ResultInterface
+    public function getQRCode($name, $secret): string
     {
-        $urlencoded = ('otpauth://totp/' . $name . '?secret=' . $secret);
-        $qrCode     = QrCode::create($urlencoded)
-            ->setEncoding(new Encoding('UTF-8'))
-            ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
-            ->setSize(300)
-            ->setMargin(10)
-            ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
-            ->setForegroundColor(new Color(0, 0, 0))
-            ->setBackgroundColor(new Color(255, 255, 255));
-        $writer     = new PngWriter();
-        return $writer->write($qrCode);
+        $name          = urlencode($name);
+        $urlencoded    = 'otpauth://totp/' . $name . '?secret=' . $secret;
+        $renderer      = new ImageRenderer(
+            new RendererStyle(300),
+            new SvgImageBackEnd()
+        );
+        $writer        = new Writer($renderer);
+        $base64Encoded = base64_encode($writer->writeString(($urlencoded)));
+        return 'data:image/svg+xml;base64,' . $base64Encoded;
     }
 
     /**
