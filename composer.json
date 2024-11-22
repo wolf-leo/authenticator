@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "php": ">=8.0",
-        "endroid/qr-code": "4.8.2"
+        "wolfcode/bacon-qr-code": "2.0.10"
     },
     "license": "BSD-2-Clause",
     "autoload": {
